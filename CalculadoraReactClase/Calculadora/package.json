@@ -8,6 +8,8 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@emotion/core": "^10.0.17",
+    "emotion-theming": "^10.0.19",
     "react": "16.8.6",
     "react-native": "0.60.6"
   },

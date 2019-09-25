@@ -3,53 +3,86 @@ import {
   StyleSheet,
   Text,
   View,
-  Button
+  Button,
+  TouchableOpacity /*TouchableOpacity es como Button, pero da feedback visual al ser pulsado*/
 } from 'react-native';
 
 export default class App extends Component {
 
   constructor(){
     super(),
-    this.state={}
+    this.state={
+      resultText:""
+    }
+  }
+
+  calculateResult(){
+    const text=this.state.resultText
+    //Ahora convertirmos el texto a operaciones 
+  }
+
+  buttonPressed(text){
+    console.log(text)
+
+    if(text=='=') {
+      return  this.calculateResult()
+    }
+
+    this.setState({
+      resultText:this.state.resultText+text
+    })
+  }
+
+  operate(operation){
+    switch (operation) {
+      case 'Del':
+        let text=this.state.resultText.split('')
+        text.pop()
+        text.join('')
+        this.setState({
+          resultText:text.join('')
+        })
+    }
   }
 
   render(){
+    let rows=[]
+    let nums=[[1,2,3],[4,5,6],[7,8,9],['.',0,'=']]
+    for (let i = 0; i < 4; i++) {
+      let row=[]
+      for (let j = 0; j < 3; j++) {
+        row.push(
+          <TouchableOpacity onPress={()=>this.buttonPressed(nums[i][j])} style={styles.btn}>
+          <Text style={styles.btntext}>{nums[i][j]}</Text>
+        </TouchableOpacity>
+        )
+      }
+      rows.push(<View style={styles.row}>{row}</View>)
+    }
+
+    let operations=['Del','+','-','x','/']
+    let ops=[]
+    for (let i = 0; i < 4; i++) {
+      ops.push(
+        <TouchableOpacity style={styles.btn} onPress={()=>this.operate(operations[i])}>
+          <Text style={[styles.btntext, styles.white]}>{operations[i]}</Text>
+        </TouchableOpacity>)
+    }
+
     return (
       <View style={styles.container}>
         <View style={styles.result}>
-          <Text style={styles.resultText}>11*11</Text>
+          <Text style={styles.resultText}>{this.state.resultText}</Text>
         </View>
         <View style={styles.calculation}>
           <Text style={styles.calculationText}>121</Text>
         </View>
         <View style={styles.buttons}>
           <View style={styles.numbers}>
-            <View style={styles.row}>
-              <Button title="0"/>
-              <Button title="0"/>
-              <Button title="0"/>
-            </View>
-            <View style={styles.row}>
-              <Button title="0"/>
-              <Button title="0"/>
-              <Button title="0"/>
-            </View>
-            <View style={styles.row}>
-              <Button title="0"/>
-              <Button title="0"/>
-              <Button title="0"/>
-            </View>
-            <View style={styles.row}>
-              <Button title="0"/>
-              <Button title="0"/>
-              <Button title="0"/>
-            </View>
-            </View>
+            {rows}
+          </View>
           <View style={styles.operations}>
-            <Button title="+"/>
-            <Button title="+"/>
-            <Button title="+"/>
-            <Button title="+"/>
+            {ops}
           </View>
         </View>
       </View>
@@ -64,6 +97,18 @@ const styles = StyleSheet.create({
    resultText:{
     fontSize:30,
     color:'white'
+   },
+   btntext:{
+     fontSize:35
+   },
+   white:{
+     color:'white'
+   },
+   btn:{
+     flex:1,
+     alignItems:"center",
+     alignSelf:"stretch",
+     justifyContent:'center'
    },
    calculationText:{
       fontSize:24,
