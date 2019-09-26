@@ -12,20 +12,40 @@ export default class App extends Component {
   constructor(){
     super(),
     this.state={
-      resultText:""
+      resultText:"",
+      calculationText:""
     }
+    this.operations=['Del','+','-','*','/']
   }
 
   calculateResult(){
     const text=this.state.resultText
+    console.log(text, eval(text))
+    this.setState({
+      calculationText:eval(text)
+    })
+
+    //eval(text) //Evalua un código de javascript y lo ejecuta
     //Ahora convertirmos el texto a operaciones 
+  }
+
+  validate(){
+    const text = this.state.resultText
+    switch (text.slice(-1)) {
+      case '+':
+      case '-':
+      case '*':
+      case '/':
+        return false
+    }
+    return true
   }
 
   buttonPressed(text){
     console.log(text)
 
     if(text=='=') {
-      return  this.calculateResult()
+      return  this.validate() && this.calculateResult()
     }
 
     this.setState({
@@ -42,6 +62,20 @@ export default class App extends Component {
         this.setState({
           resultText:text.join('')
         })
+        break
+      case '+':
+      case '-':
+      case '*':
+      case '/':
+        const lastChar=this.state.resultText.split('').pop()
+
+        if(this.operations.indexOf(lastChar) > 0) return//Comprueba que el ultimo caracter no sea de operacion
+
+
+        if(this.state.text=="") return
+        this.setState({
+          resultText: this.state.resultText + operation
+        })
     }
   }
 
@@ -52,7 +86,7 @@ export default class App extends Component {
       let row=[]
       for (let j = 0; j < 3; j++) {
         row.push(
-          <TouchableOpacity onPress={()=>this.buttonPressed(nums[i][j])} style={styles.btn}>
+          <TouchableOpacity key={nums[i][j]} onPress={()=>this.buttonPressed(nums[i][j])} style={styles.btn}>
           <Text style={styles.btntext}>{nums[i][j]}</Text>
         </TouchableOpacity>
         )
@@ -60,12 +94,11 @@ export default class App extends Component {
       rows.push(<View style={styles.row}>{row}</View>)
     }
 
-    let operations=['Del','+','-','x','/']
     let ops=[]
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 5; i++) {
       ops.push(
-        <TouchableOpacity style={styles.btn} onPress={()=>this.operate(operations[i])}>
-          <Text style={[styles.btntext, styles.white]}>{operations[i]}</Text>
+        <TouchableOpacity key={this.operations[i]} style={styles.btn} onPress={()=>this.operate(this.operations[i])}>
+          <Text style={[styles.btntext, styles.white]}>{this.operations[i]}</Text>
         </TouchableOpacity>)
     }
 
@@ -75,7 +108,7 @@ export default class App extends Component {
           <Text style={styles.resultText}>{this.state.resultText}</Text>
         </View>
         <View style={styles.calculation}>
-          <Text style={styles.calculationText}>121</Text>
+          <Text style={styles.calculationText}>{this.state.calculationText}</Text>
         </View>
         <View style={styles.buttons}>
           <View style={styles.numbers}>
@@ -95,11 +128,12 @@ const styles = StyleSheet.create({
       flex:1,
    },
    resultText:{
-    fontSize:30,
-    color:'white'
+    fontSize:40,
+    color:'black'
    },
    btntext:{
-     fontSize:35
+     fontSize:35,
+     color:'white'
    },
    white:{
      color:'white'
@@ -111,8 +145,8 @@ const styles = StyleSheet.create({
      justifyContent:'center'
    },
    calculationText:{
-      fontSize:24,
-      color:'white'
+      fontSize:30,
+      color:'black'
    },
    row:{
     flexDirection:'row',
@@ -122,13 +156,13 @@ const styles = StyleSheet.create({
    },
    result:{
      flex:2,
-     backgroundColor:'red',
+     backgroundColor:'white',
      justifyContent:'center',
      alignItems:'flex-end'
    },
    calculation:{
     flex:1,
-    backgroundColor:'green',
+    backgroundColor:'#9fd5d1',
     justifyContent:'center',
     alignItems:'flex-end'
   },
@@ -138,12 +172,12 @@ const styles = StyleSheet.create({
   },
   numbers:{
     flex:3,
-    backgroundColor:'yellow'
-  },
+    backgroundColor:'#434343',
+   },
   operations:{
     flex:1,
     justifyContent:'space-around',
     alignItems:'stretch',
-    backgroundColor:'black'
+    backgroundColor:'#636363'
   }
 });
